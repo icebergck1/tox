@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Charles River Laboratories DSA 业务分析报告 (2020 Q1 - 2026 Q1)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #FFF8F0 0%, #FDF0E4 50%, #FAEBD7 100%);
+    color: #4A2C1A;
+    line-height: 1.7;
+    padding: 30px 20px;
+  }
+  .container { max-width: 1280px; margin: 0 auto; }
+  header {
+    background: linear-gradient(100deg, #D98C5F 0%, #C67B4E 100%);
+    color: #FFF8F0;
+    padding: 36px 40px;
+    border-radius: 14px;
+    box-shadow: 0 6px 24px rgba(160, 82, 45, 0.18);
+    margin-bottom: 24px;
+  }
+  header h1 { font-size: 26px; margin-bottom: 8px; font-weight: 700; }
+  header .sub { font-size: 14px; opacity: 0.95; font-weight: 300; }
+  header .meta {
+    margin-top: 14px; padding-top: 14px;
+    border-top: 1px solid rgba(255,248,240,0.3);
+    font-size: 12px; opacity: 0.9;
+    display: flex; gap: 20px; flex-wrap: wrap;
+  }
+
+  .section {
+    background: #FFFCF7;
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 22px;
+    box-shadow: 0 3px 14px rgba(160, 82, 45, 0.08);
+    border-left: 4px solid #D98C5F;
+  }
+  .section h2 {
+    color: #A0522D;
+    font-size: 20px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px dotted #EFCBB0;
+    font-weight: 600;
+  }
+  .section h3 {
+    color: #B5653D;
+    font-size: 16px;
+    margin: 18px 0 10px 0;
+    font-weight: 600;
+  }
+  .section p { font-size: 14px; margin-bottom: 10px; color: #5C3A22; }
+  .section ul { margin: 8px 0 12px 22px; font-size: 14px; color: #5C3A22; }
+  .section ul li { margin-bottom: 5px; }
+
+  .caveat-box {
+    background: #FFF3E0;
+    border-left: 4px solid #E8925A;
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin: 14px 0;
+    font-size: 13px;
+    color: #6B3E20;
+  }
+  .caveat-box strong { color: #A0522D; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 13px;
+    background: #FFFDF9;
+  }
+  thead {
+    background: linear-gradient(90deg, #E8A97A 0%, #D98C5F 100%);
+    color: #FFF8F0;
+  }
+  th {
+    padding: 10px 12px;
+    text-align: center;
+    font-weight: 600;
+    border: 1px solid #C67B4E;
+  }
+  td {
+    padding: 9px 10px;
+    text-align: center;
+    border: 1px solid #F0DCC4;
+    color: #4A2C1A;
+  }
+  tbody tr:nth-child(even) { background: #FDF5EB; }
+  tbody tr:hover { background: #FAE6CF; transition: 0.2s; }
+  .year-header {
+    background: #F4D9B8 !important;
+    font-weight: 700;
+    color: #8B4513 !important;
+  }
+  .highlight { background: #FFE4C4 !important; font-weight: 600; }
+  .negative { color: #B2451A; font-weight: 600; }
+  .positive { color: #6B8E23; font-weight: 600; }
+  .estimate { color: #8B7355; font-style: italic; }
+
+  .chart-box {
+    background: #FFFDF9;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 14px 0;
+    border: 1px solid #F0DCC4;
+  }
+  .chart-container {
+    position: relative;
+    height: 340px;
+    margin: 0 auto;
+  }
+  .chart-title {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #A0522D;
+    margin-bottom: 8px;
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin: 16px 0;
+  }
+  .kpi-card {
+    background: linear-gradient(135deg, #FFF3E0 0%, #FAEBD7 100%);
+    border: 1px solid #E8C9A3;
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .kpi-card .label {
+    font-size: 11px;
+    color: #8B5A3C;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .kpi-card .value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #A0522D;
+    margin-bottom: 3px;
+  }
+  .kpi-card .note {
+    font-size: 11px;
+    color: #7A5338;
+  }
+
+  .timeline {
+    border-left: 3px solid #D98C5F;
+    padding-left: 20px;
+    margin: 16px 0 16px 8px;
+  }
+  .timeline-item {
+    position: relative;
+    padding-bottom: 14px;
+    font-size: 13px;
+    color: #5C3A22;
+  }
+  .timeline-item::before {
+    content: "●";
+    position: absolute;
+    left: -28px;
+    top: -2px;
+    color: #D98C5F;
+    font-size: 14px;
+  }
+  .timeline-item .date {
+    font-weight: 700;
+    color: #A0522D;
+    margin-right: 8px;
+  }
+
+  .driver-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .driver-card {
+    background: #FFFDF9;
+    border: 1px solid #EFCBB0;
+    border-top: 4px solid #D98C5F;
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .driver-card.positive-driver { border-top-color: #8FBC8F; }
+  .driver-card.negative-driver { border-top-color: #CD5C5C; }
+  .driver-card h4 {
+    font-size: 14px;
+    color: #A0522D;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .driver-card.positive-driver h4 { color: #556B2F; }
+  .driver-card.negative-driver h4 { color: #A0522D; }
+  .driver-card p { font-size: 13px; color: #5C3A22; }
+
+  footer {
+    text-align: center;
+    margin-top: 30px;
+    padding: 20px;
+    color: #8B5A3C;
+    font-size: 12px;
+    border-top: 1px dotted #D9B894;
+  }
+  .note-inline {
+    display: inline-block;
+    background: #FFE4C4;
+    color: #8B4513;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>🔬 Charles River Laboratories (CRL) · DSA 安全性评价业务深度分析</h1>
+  <div class="sub">2020 Q1 – 2026 Q1 · 季度销售额 / 销量 / NHP 存栏 / 单价趋势 & 未来 9 个月灵长类使用量展望</div>
+  <div class="meta">
+    <span>📅 报告日期: 2026 年 4 月 20 日</span>
+    <span>📊 数据来源: CRL 10-K / 10-Q / 8-K, 业绩电话会, USDA, 行业研报, 新闻媒体</span>
+    <span>💰 货币单位: 美元 (USD)</span>
+  </div>
+</header>
+
+<!-- ===================================== 摘要 ===================================== -->
+<div class="section">
+  <h2>📌 执行摘要 (Executive Summary)</h2>
+  <p>Charles River Laboratories 是全球 CRO 行业中临床前安全性评价 (Safety Assessment) 的绝对龙头，其 DSA (Discovery & Safety Assessment) 业务在 2024 年占公司总营收的 60.5%。自 2020 年 COVID-19 以来，DSA 业务经历了三个截然不同的阶段：</p>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="label">2020 DSA 年收入</div>
+      <div class="value">$1.84B</div>
+      <div class="note">COVID 轻微拖累</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">2022 DSA 年收入 (峰值)</div>
+      <div class="value">$2.45B</div>
+      <div class="note">NHP 价格+量齐升</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">2023 DSA 年收入 (顶)</div>
+      <div class="value">$2.62B</div>
+      <div class="note">订单积压兑现</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">2025 DSA 年收入</div>
+      <div class="value">$2.40B</div>
+      <div class="note">连续两年收缩</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">CRL NHP 使用量 (2021)</div>
+      <div class="value">17,105 只</div>
+      <div class="note">占美国 NHP 总用量 26%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">NHP 现货价格 (2024)</div>
+      <div class="value">$35K-54K</div>
+      <div class="note">较 2019 年涨 10-15 倍</div>
+    </div>
+  </div>
+
+  <h3>三大阶段概览</h3>
+  <ul>
+    <li><strong>2020-2022 超级周期：</strong>中国 2020 年 NHP 出口禁令 + COVID 后生物科技融资狂潮，Safety Assessment 价量齐升，DSA 年收入从 $1.84B 涨至 $2.45B (+33%)。</li>
+    <li><strong>2023-2025 去库存周期：</strong>2023 年 2 月 DOJ 就柬埔寨 NHP 供应链发起调查，叠加生物科技融资寒冬 & 大药企管线重组，订单取消率抬升；DSA 收入从 2023 年 $2.62B 高点回落至 2025 年 $2.40B。</li>
+    <li><strong>2026 复苏初期：</strong>Q4 2025 DSA 新订单 book-to-bill 升至 1.12x (三季度仅 0.82x)，$665M 净订单；但由于订单到收入存在时滞，DSA 2026 全年仍预计"持平至低个位数下滑"，下半年重回增长。</li>
+  </ul>
+</div>
+
+<!-- ===================================== 重要说明 ===================================== -->
+<div class="section">
+  <h2>⚠️ 关于数据披露的重要说明</h2>
+  <div class="caveat-box">
+    <strong>披露粒度限制：</strong> Charles River 是美股上市公司，其分部披露口径为 <em>DSA 总收入</em>，不单独披露"灵长类 vs 啮齿类"的销售额/销量。以下数据基于以下来源整合推算：
+    <ul style="margin-top:8px;">
+      <li><strong>DSA 季度收入：</strong>直接来自 CRL 的 10-Q/8-K 公告 (硬数据)。</li>
+      <li><strong>Safety Assessment 价/量拆分：</strong>来自业绩电话会管理层定性评论 (non-GAAP 描述)。</li>
+      <li><strong>CRL NHP 使用量：</strong>来自 USDA APHIS 动物福利法年度申报 (2018-2022 年度) 以及诉讼文件 + 媒体报道 (2023 年以后)。</li>
+      <li><strong>NHP 单价：</strong>使用 Bloomberg、Fortune 报道中的行业现货价和 CRL 长协价 (CRL 不披露具体单价)。</li>
+      <li><strong>年底存栏量 (inventory / biological assets)：</strong>CRL 未按动物头数披露，仅披露"生物资产"账面价值 (合并科目)；以下给出 2023 年收购 Noveprim 时披露的 $168M biological assets 等数据做参考。</li>
+      <li><strong>Q1 2026 数据：</strong>CRL 计划于 2026 年 5 月 7 日发布 Q1 2026 业绩；本报告截止日 (2026-04-20) 尚未披露实际数字，Q1 2026 列示的为管理层 2 月 18 日指引区间和分析师一致预期。</li>
+      <li><strong>啮齿类 (小动物) 归属注意：</strong>CRL 的小动物 (大小鼠) 销售主要归属于 RMS 分部 (Research Models & Services)，非 DSA；只有用于 DSA 安全性评价研究内部消耗的啮齿动物成本算入 DSA 服务成本。因此"DSA 下啮齿类销售额"严格意义上不是一个公司披露口径，本报告将 RMS-Small Models 收入作为近似参考，同时列示 DSA Safety Assessment 服务收入趋势。</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================================== DSA 季度收入表 ===================================== -->
+<div class="section">
+  <h2>📈 表 1 · DSA 分部季度收入 (2020 Q1 – 2026 Q1)</h2>
+  <p>单位: 百万美元 (USD Million)；括号内为同比组织增长率 (organic YoY)。</p>
+  <table>
+    <thead>
+      <tr>
+        <th>年度</th>
+        <th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+        <th>全年 DSA</th>
+        <th>YoY 变化</th>
+        <th>关键事件</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="year-header">2020</td>
+        <td>~441.2</td>
+        <td>442.6 <span class="negative">(-2.9%)</span></td>
+        <td>461.2 <span class="positive">(+8.6%)</span></td>
+        <td>495.0 <span class="positive">(+10%)</span></td>
+        <td><strong>1,840</strong></td>
+        <td class="negative">COVID 轻微拖累</td>
+        <td>中国颁布 NHP 出口禁令 (Feb 2020)</td>
+      </tr>
+      <tr>
+        <td class="year-header">2021</td>
+        <td>501.2</td>
+        <td>~542.9 <span class="positive">(+18.1%)</span></td>
+        <td>531.8</td>
+        <td>534.1 <span class="positive">(+6.7%)</span></td>
+        <td><strong>2,110</strong></td>
+        <td class="positive">+14.7%</td>
+        <td>Biotech 融资高峰，订单排至 2023</td>
+      </tr>
+      <tr>
+        <td class="year-header">2022</td>
+        <td>544.3 <span class="positive">(+9.5%)</span></td>
+        <td>591.9</td>
+        <td>619.5 <span class="positive">(+20.8%)</span></td>
+        <td>691.7 <span class="positive">(+26.5%)</span></td>
+        <td><strong>2,447</strong></td>
+        <td class="positive">+16.0%</td>
+        <td>Safety Assessment 价量齐升；收购 Noveprim 49% 股权</td>
+      </tr>
+      <tr class="highlight">
+        <td class="year-header">2023</td>
+        <td>662.4 <span class="positive">(+23.6%)</span></td>
+        <td>663.5 <span class="positive">(+11.7%)</span></td>
+        <td>664.0 <span class="positive">(+5.3%)</span></td>
+        <td>625.8 <span class="negative">(-6.0%)</span></td>
+        <td><strong>2,616 (峰值)</strong></td>
+        <td class="positive">+6.8%</td>
+        <td>Feb 2023 DOJ 就柬埔寨 NHP 启动刑事调查；11 月完成 Noveprim 增持至 90%</td>
+      </tr>
+      <tr>
+        <td class="year-header">2024</td>
+        <td>605.5 <span class="negative">(-8.7%)</span></td>
+        <td>627.4</td>
+        <td>615.1 <span class="negative">(-7.4%)</span></td>
+        <td>603.3 <span class="negative">(-3.5%)</span></td>
+        <td><strong>2,451</strong></td>
+        <td class="negative">-6.3%</td>
+        <td>生物科技融资寒冬；Q4 2024 NHP 库存减值 $27M</td>
+      </tr>
+      <tr>
+        <td class="year-header">2025</td>
+        <td>592.6 <span class="negative">(-1.4%)</span></td>
+        <td>618.0 <span class="negative">(-2.4%)</span></td>
+        <td>600.7 <span class="negative">(-3.1%)</span></td>
+        <td>591.6 <span class="negative">(-3.3%)</span></td>
+        <td><strong>2,403</strong></td>
+        <td class="negative">-2.0%</td>
+        <td>Q4 订单改善 (B/B=1.12x)；SEC 11 月关闭调查，不予处罚</td>
+      </tr>
+      <tr style="background:#FFF3E0;">
+        <td class="year-header">2026</td>
+        <td class="estimate">~585-605 (E)</td>
+        <td class="estimate">待披露</td>
+        <td class="estimate">待披露</td>
+        <td class="estimate">待披露</td>
+        <td class="estimate">~2,400-2,450 (E)</td>
+        <td class="estimate">持平至-2%</td>
+        <td>Jan 2026 完成收购 K.F. (柬埔寨)，$510M；H2 预计重回增长</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px; color:#8B5A3C;"><strong>注：</strong>Q4 2022 含第 53 个工作周 (+5.1 ppt 贡献)；Q1 2026 为 CRL 指引 & 分析师一致预期 ($1.96 非 GAAP EPS，总收入约 $970-985M，DSA 按占比推算)；实际数字将于 2026 年 5 月 7 日披露。</p>
+</div>
+
+<!-- ===================================== 季度收入趋势图 ===================================== -->
+<div class="section">
+  <h2>📊 图 1 · DSA 季度收入趋势 & 订单 Book-to-Bill</h2>
+  <div class="chart-box">
+    <div class="chart-title">DSA 季度收入 (百万美元) — 2020Q1 至 2026Q1 预估</div>
+    <div class="chart-container">
+      <canvas id="dsaChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================== NHP 价格趋势 ===================================== -->
+<div class="section">
+  <h2>💰 表 2 · NHP (食蟹猴) 单价趋势 (2020-2026, 行业参考价)</h2>
+  <p>以下为<strong>行业现货/批发价</strong>区间，非 CRL 向客户的 Safety Assessment 打包服务价格。CRL 自有养殖场成本远低于现货 (~$3-8K/只)，这也是 CRL 大力收购 Noveprim/K.F. 的核心动机。</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>期间</th>
+        <th>食蟹猴现货价 (USD/只)</th>
+        <th>同比变化</th>
+        <th>关键驱动</th>
+        <th>CRL Safety Assessment 服务价同比</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>2019 年均</td><td>$2,500 - 3,500</td><td>-</td><td>中国为主要出口国</td><td>基准</td></tr>
+      <tr><td>2020 上</td><td>$3,500 - 6,000</td><td class="positive">+50-70%</td><td>中国 2 月禁令，供给骤减</td><td>个位数提价</td></tr>
+      <tr><td>2021</td><td>$10,000 - 15,000</td><td class="positive">+100-150%</td><td>柬埔寨/毛里求斯成主要来源</td><td>中高个位数</td></tr>
+      <tr><td>2022</td><td>$18,000 - 28,000</td><td class="positive">+80%</td><td>订单排队至 2023，积压严重</td><td>显著双位数 (~10-15%)</td></tr>
+      <tr class="highlight"><td>2023 H1</td><td>$35,000 - 45,000</td><td class="positive">+60%</td><td>Feb 2023 DOJ 调查，柬埔寨进口暂停</td><td>继续双位数</td></tr>
+      <tr class="highlight"><td>2023 Q4</td><td>$45,000 - 54,000 (峰值)</td><td class="positive">+20%</td><td>供给最紧张，CITES 审议悬而未决</td><td>仍有提价 (+5-10%)</td></tr>
+      <tr><td>2024 上</td><td>$35,000 - 50,000</td><td class="negative">小幅回落</td><td>需求端弱化 (biotech 寒冬)</td><td class="negative">Q1 提价放缓</td></tr>
+      <tr><td>2024 下</td><td>$30,000 - 45,000</td><td class="negative">-15 至 -20%</td><td>生物科技客户缩减研究</td><td class="negative">Q4 略有降价</td></tr>
+      <tr><td>2025 全年</td><td>$25,000 - 40,000</td><td class="negative">-15 至 -20%</td><td>供需同步弱化，但 H2 需求回暖</td><td class="negative">持平/略降 (~-1 至 -2%)</td></tr>
+      <tr style="background:#FFF3E0;"><td>2026 Q1 (E)</td><td class="estimate">$28,000 - 42,000</td><td class="estimate">略反弹</td><td>Q4 2025 订单激增超预期，CRL 转向公开市场采购，推高成本</td><td class="estimate">稳定</td></tr>
+    </tbody>
+  </table>
+  <div class="caveat-box" style="margin-top:10px;">
+    <strong>核心洞见：</strong>Charles River 在 2023 年业绩电话会中称"我们能把上涨的猴价成本转嫁给终端客户"。但 2024-2025 年随着生物科技融资冷却、大药企管线重组，<em>转嫁能力明显减弱</em>——管理层在 Q3/Q4 2024 明确表示 Safety Assessment 价格出现"轻微下降"。这是 DSA 收入连续两年下滑的核心原因之一。
+  </div>
+</div>
+
+<!-- ===================================== NHP 价格图 ===================================== -->
+<div class="section">
+  <h2>📉 图 2 · NHP 单价 & CRL Safety Assessment 服务价格指数</h2>
+  <div class="chart-box">
+    <div class="chart-title">NHP 现货价区间 (USD/只) — 2019-2026Q1 预估</div>
+    <div class="chart-container">
+      <canvas id="priceChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================== CRL NHP 使用量 ===================================== -->
+<div class="section">
+  <h2>🐒 表 3 · Charles River NHP 年使用量 & 存栏 (2020-2025)</h2>
+  <p>CRL 不按头数公开披露存栏/使用量。下表基于 USDA 动物福利法年度申报 (APHIS)、诉讼披露文件、管理层评论推算。</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>年度</th>
+        <th>CRL 当年 NHP 使用量 (只)</th>
+        <th>美国 NHP 市场总量</th>
+        <th>CRL 市占率</th>
+        <th>年末估算存栏 (只，近似)</th>
+        <th>生物资产账面 (DSA, $M)</th>
+        <th>数据来源/备注</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="year-header">2020</td>
+        <td>~15,000</td>
+        <td>~62,000</td>
+        <td>~24%</td>
+        <td>~8,000 - 10,000</td>
+        <td>-</td>
+        <td>USDA 申报；含 Cambodia 大量进口</td>
+      </tr>
+      <tr>
+        <td class="year-header">2021</td>
+        <td><strong>17,105</strong></td>
+        <td>65,674</td>
+        <td><strong>26.0%</strong></td>
+        <td>~9,000 - 12,000</td>
+        <td>-</td>
+        <td>诉讼文件明确披露 (USDA 源)</td>
+      </tr>
+      <tr class="highlight">
+        <td class="year-header">2022</td>
+        <td><strong>15,272</strong></td>
+        <td>~60,000</td>
+        <td>~25%</td>
+        <td>~12,000 - 15,000</td>
+        <td>+$90M (Noveprim 49% 股权)</td>
+        <td>Fortune 援引 CRL 数据；库存开始累积</td>
+      </tr>
+      <tr class="highlight">
+        <td class="year-header">2023</td>
+        <td><strong>~11,400</strong> <span class="negative">(-25%)</span></td>
+        <td>~45,000 (大幅下降)</td>
+        <td>~25%</td>
+        <td>~13,000 - 16,000 (高位)</td>
+        <td>+$168M (Noveprim 40% 追加)</td>
+        <td>Bailey 教授引用数据；Cambodia 1,200 只滞留美国</td>
+      </tr>
+      <tr>
+        <td class="year-header">2024</td>
+        <td>~10,000 - 11,000 (E)</td>
+        <td>~42,000</td>
+        <td>~24-25%</td>
+        <td>~10,000 - 13,000</td>
+        <td>$27M 库存减值 (Q4)</td>
+        <td>Safety Assessment 量-8% 同比推算</td>
+      </tr>
+      <tr>
+        <td class="year-header">2025</td>
+        <td>~11,000 - 12,000 (E)</td>
+        <td>~43,000</td>
+        <td>~25-28%</td>
+        <td>~10,000 - 12,000</td>
+        <td>转向公开市场采购</td>
+        <td>Q4 NHP 研究数超预期，CRL 被迫外采高价</td>
+      </tr>
+      <tr style="background:#FFF3E0;">
+        <td class="year-header">2026 Q1 (E)</td>
+        <td class="estimate">约 2,800-3,200 季度量</td>
+        <td class="estimate">-</td>
+        <td class="estimate">-</td>
+        <td class="estimate">+ K.F. 收购并入 ~10,000+ 只</td>
+        <td class="estimate">+ ~$250-350M (K.F. 生物资产)</td>
+        <td>K.F. 柬埔寨 1 月完成并表</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px; color:#8B5A3C;"><strong>关键事实：</strong>Noveprim (毛里求斯) + K.F. (柬埔寨) 并表后，CRL CEO Foster 在 2026 年 JPM 会议上表示"<em>我们可以内部供给大部分未来每年的 NHP 需求</em>"。按 Safety Assessment 年 NHP 研究 10,000-12,000 只估算，CRL 总存栏 (自有+合作) 规模约 20,000-30,000 只 (含不同月龄、不同用途)。</p>
+</div>
+
+<!-- ===================================== 啮齿类 (小动物) ===================================== -->
+<div class="section">
+  <h2>🐭 表 4 · 啮齿类 (大小鼠) 相关收入趋势</h2>
+  <div class="caveat-box">
+    <strong>重要说明：</strong>CRL 啮齿类商业化销售归属 <em>RMS 分部</em>，不是 DSA。DSA 分部只使用啮齿动物做安全性评价服务，成本内部结算。因此严格意义上"DSA 下啮齿类销售额"不是披露口径。下表列示两个角度：(1) RMS 分部 Small Models 全球销售趋势；(2) DSA Safety Assessment 服务中啮齿类研究收入 (估算)。
+  </div>
+
+  <h3>(a) RMS 分部 Small Models (啮齿类模型) 季度收入趋势</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>年度</th><th>RMS 全年收入</th><th>Small Models 估算占比</th><th>啮齿类收入估值</th><th>单价/量驱动</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>2020</td><td>$571M</td><td>~60-65%</td><td>~$350-370M</td><td>COVID 期间疫苗需求推高</td></tr>
+      <tr><td>2021</td><td>$678M</td><td>~58-62%</td><td>~$400-420M</td><td>中国业务高增长</td></tr>
+      <tr><td>2022</td><td>$762M</td><td>~55-58%</td><td>~$420-445M</td><td>中高个位数提价</td></tr>
+      <tr><td>2023</td><td>$820M</td><td>~45-50% (NHP 占比升)</td><td>~$370-410M</td><td>2023 Nov 收购 Noveprim NHP 业务并入</td></tr>
+      <tr><td>2024</td><td>$806M</td><td>~40-45%</td><td>~$330-360M</td><td>价格继续升，量弱化</td></tr>
+      <tr><td>2025</td><td>~$830M</td><td>~40-45%</td><td>~$340-370M</td><td>Q3-Q4 大模型 (NHP) 强；小模型北美弱</td></tr>
+    </tbody>
+  </table>
+
+  <h3>(b) DSA Safety Assessment 服务内啮齿类研究 (估算)</h3>
+  <ul>
+    <li>Safety Assessment 占 DSA 收入约 <strong>75-80%</strong> (其余为 Discovery Services)。</li>
+    <li>啮齿类 (大鼠/小鼠) 研究占 Safety Assessment 研究项目<strong>数量</strong>的约 60-70%，但由于 NHP 研究客单价远高，<strong>收入占比</strong>较低——啮齿类研究约占 Safety Assessment 收入 <strong>30-40%</strong>，NHP 研究占 <strong>50-60%</strong>，犬类等其他 10%。</li>
+    <li>按此估算：2023 年 CRL 啮齿类安全性评价收入约 <strong>$600-800M</strong>，2025 年约 <strong>$550-720M</strong>。</li>
+    <li>啮齿类<strong>单价</strong>：大鼠 $50-150/只，小鼠 $30-80/只，基因工程鼠可至数千。CRL 在 2024-2025 年小模型"每年低个位数提价"。</li>
+    <li>年末<strong>存栏</strong>：CRL 全球小动物年产能超数百万只 (具体不披露)，是全球最大供应商 ("实验动物界的通用汽车")。</li>
+  </ul>
+</div>
+
+<!-- ===================================== DSA 收入构成图 ===================================== -->
+<div class="section">
+  <h2>🥧 图 3 · DSA 收入构成 (估算, 2025)</h2>
+  <div class="chart-box">
+    <div class="chart-title">按业务/动物类别拆分 DSA 年收入 $2.40B (2025 估算)</div>
+    <div class="chart-container" style="height:300px;">
+      <canvas id="pieChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================== 关键事件时间轴 ===================================== -->
+<div class="section">
+  <h2>📅 关键事件时间轴 (2020-2026)</h2>
+  <div class="timeline">
+    <div class="timeline-item"><span class="date">2020 年 2 月</span> 中国发布 COVID-19 后 NHP 出口禁令，全球食蟹猴供给骤降约 50%。</div>
+    <div class="timeline-item"><span class="date">2021 年</span> CRL Safety Assessment 订单可见度延长至 2 年 (排队效应)，单价显著抬升。</div>
+    <div class="timeline-item"><span class="date">2022 年 4 月</span> CRL 收购 Explora BioLabs (IS 业务)。</div>
+    <div class="timeline-item"><span class="date">2022 年 11 月</span> 美国联邦大陪审团起诉柬埔寨 Vanny Resources 高管，指控走私野生猴伪造成繁殖猴。</div>
+    <div class="timeline-item"><span class="date">2023 年 2 月 16 日</span> 🔴 CRL 收到 DOJ 刑事传票，<strong>自愿暂停柬埔寨 NHP 进口</strong>；股价单日跌 12.4%。Fish and Wildlife Service 拒绝清关部分 CRL 柬埔寨猴船运。</div>
+    <div class="timeline-item"><span class="date">2023 年 5 月</span> SEC 执法部门请求 CRL 提供亚洲 NHP 采购相关信息。</div>
+    <div class="timeline-item"><span class="date">2023 年 11 月</span> CRL 完成 Noveprim 41% 增持，<strong>控股比例达 90%</strong>，收购价 $144.6M + 或有 $55M。</div>
+    <div class="timeline-item"><span class="date">2023 年 Q4</span> NHP 现货价创历史新高 $54,000/只；DSA 季度收入开始下滑 (-6%)。</div>
+    <div class="timeline-item"><span class="date">2024 年全年</span> 🟡 生物科技融资寒冬，大药企管线重组；DSA 季度同比连续四季度下滑 (-3.5% 至 -8.7%)。</div>
+    <div class="timeline-item"><span class="date">2024 年 Q4</span> 🔴 CRL 计提 $27M NHP 库存减值 (与柬埔寨滞留猴相关)；DSA 非 GAAP 营业利润率降至 24.7%。</div>
+    <div class="timeline-item"><span class="date">2025 年 2 月</span> CITES 常委会推迟柬埔寨 NHP 贸易暂停议案，CRL 获得喘息。</div>
+    <div class="timeline-item"><span class="date">2025 年 4 月</span> 🟡 FDA 发布"减少动物实验路线图" (Roadmap to Reducing Animal Testing)；NAMs 逐步铺开。</div>
+    <div class="timeline-item"><span class="date">2025 年 7 月</span> NIH 宣布停止资助"纯动物实验"项目。</div>
+    <div class="timeline-item"><span class="date">2025 年 11 月</span> ✅ SEC 关闭对 CRL 调查，<strong>不予处罚</strong>。</div>
+    <div class="timeline-item"><span class="date">2025 年 Q4</span> ✅ DSA 订单 book-to-bill 跳升至 <strong>1.12x</strong> (三季度 0.82x)，净订单 $665M，小型 biotech 和大药企双双改善。</div>
+    <div class="timeline-item"><span class="date">2026 年 1 月</span> ✅ CRL 宣布 $510M 收购柬埔寨 K.F.；同时完成 PathoQuest 全资收购 (NAMs 能力)；任命前 FDA 副专员进入科学顾问委。</div>
+    <div class="timeline-item"><span class="date">2026 年 2 月 18 日</span> 发布 2025 全年业绩，DSA $2.40B (-2.0%)；指引 2026 "持平至低个位数下滑"，H2 重回增长。</div>
+    <div class="timeline-item"><span class="date">2026 年 2 月 25 日</span> 宣布以 $145M 现金 + $10M 或有将欧洲五处发现服务资产出售给 IQVIA (2025 年营收 $144M)。</div>
+    <div class="timeline-item"><span class="date">2026 年 3 月 18 日</span> 🟡 FDA 发布 NAMs 使用指导草案，明确"无需先验证即可提交"；行业中长期利空 NHP 需求增速。</div>
+    <div class="timeline-item"><span class="date">2026 年 5 月 (待)</span> CEO 交接：Jim Foster 卸任，COO Birgit Girshick 5 月升任 CEO；同日发布 Q1 2026 业绩。</div>
+  </div>
+</div>
+
+<!-- ===================================== 未来 9 个月预测 ===================================== -->
+<div class="section">
+  <h2>🔮 未来 9 个月 (2026 年 5 月 – 2027 年 1 月) 灵长类使用量预测</h2>
+
+  <div class="chart-box">
+    <div class="chart-title">CRL DSA 季度 NHP 使用量预测 (只) — 2025 实际 + 2026 预测</div>
+    <div class="chart-container">
+      <canvas id="forecastChart"></canvas>
+    </div>
+  </div>
+
+  <h3>季度量化预测 (仅 DSA Safety Assessment 内部消耗)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>期间</th>
+        <th>NHP 使用量预测 (只)</th>
+        <th>同比变化</th>
+        <th>CRL 内部自供占比</th>
+        <th>说明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Q1 2026 (实际待披露)</td><td>2,800 - 3,200</td><td class="positive">+5 至 +10%</td><td>~60% (K.F. 并表后)</td><td>Q4 2025 订单激增的部分兑现</td></tr>
+      <tr class="highlight"><td>Q2 2026 (May-Jun-Jul)</td><td>3,200 - 3,600</td><td class="positive">+8 至 +12%</td><td>~70%</td><td>Q4 2025 book-to-bill 1.12x 开始大规模转化为收入</td></tr>
+      <tr class="highlight"><td>Q3 2026 (Aug-Sep-Oct)</td><td>3,400 - 3,800</td><td class="positive">+10 至 +15%</td><td>~75%</td><td>传统旺季 + 重回增长；K.F. 全季度并表</td></tr>
+      <tr class="highlight"><td>Q4 2026 (Nov-Dec-Jan'27)</td><td>3,500 - 4,000</td><td class="positive">+12 至 +18%</td><td>~80%</td><td>Biotech 融资回暖传导，大药企 IND 提交高峰</td></tr>
+      <tr><td><strong>未来 9 个月合计 (5/2026 - 1/2027)</strong></td><td><strong>10,100 - 11,400 只</strong></td><td class="positive"><strong>+10 至 +15%</strong></td><td>~75%</td><td>全年 2026 使用量回到 13,000-14,500 只，接近 2021 水平</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===================================== 主要驱动因素 ===================================== -->
+<div class="section">
+  <h2>🎯 未来 9 个月 NHP 使用量的核心驱动因素</h2>
+
+  <h3>正向驱动 (推高使用量)</h3>
+  <div class="driver-grid">
+    <div class="driver-card positive-driver">
+      <h4>① Q4 2025 订单强反弹 (book-to-bill 1.12x)</h4>
+      <p>$665M 净新订单显著超收入，<strong>订单到开始实际研究的时滞约 4-6 个月</strong>。Q2-Q4 2026 将是订单兑现的集中期。CEO Foster 明确指出"强劲的 B/B 将在 2026 年转化为收入"。</p>
+    </div>
+    <div class="driver-card positive-driver">
+      <h4>② 生物科技融资回暖 + 大药企重组完成</h4>
+      <p>Q4 2025 全球 biotech IPO/融资 <strong>$280 亿</strong>创季度记录。大药企 (GLP-1、ADC、AD) 集中完成管线优化，重启外包。CRL COO Girshick: "药企回归工作，2026 不再聚焦资金问题"。</p>
+    </div>
+    <div class="driver-card positive-driver">
+      <h4>③ 生物制剂新分子井喷</h4>
+      <p>mAb、ADC、基因治疗、细胞治疗对 NHP 为<strong>唯一可用模型</strong> (生物药不能用啮齿类完成安全评价)。FDA 2025 年批准 60+ 种生物制剂，每个新项目均需 NHP 毒理。</p>
+    </div>
+    <div class="driver-card positive-driver">
+      <h4>④ K.F. 柬埔寨并表降低单位成本</h4>
+      <p>$510M 收购 2026 年 1 月完成。K.F. 历史上是 CRL 主要 NHP 供应商。自建供应后，CRL 可以<strong>降低价格抢市场份额</strong>，刺激使用量。2026 EPS 增厚 $0.25，2027 增厚 $0.60。</p>
+    </div>
+    <div class="driver-card positive-driver">
+      <h4>⑤ 竞争对手 Inotiv/Envigo 继续挣扎</h4>
+      <p>Inotiv Q1 FY2026 (2025-12) NHP 销量仍下滑；柬埔寨供应链问题重创 Inotiv。CRL 市场份额有望进一步提升至 28-30%。</p>
+    </div>
+    <div class="driver-card positive-driver">
+      <h4>⑥ AI 驱动早期筛选 → 更多后期候选</h4>
+      <p>Girshick: "AI 允许客户筛选 20,000 个靶点，最终将<strong>更多分子推入临床前阶段</strong>"。AI 是近期的增量推手，而非替代者。</p>
+    </div>
+  </div>
+
+  <h3>负向驱动 (压制使用量)</h3>
+  <div class="driver-grid">
+    <div class="driver-card negative-driver">
+      <h4>① FDA NAMs 路线图中长期压制</h4>
+      <p>FDA 2025-04 发布路线图：3-5 年<strong>逐步取消 mAb 常规动物实验</strong>要求。2026-03-18 进一步发布草案，<strong>未经验证的 NAMs 数据亦可提交</strong>。长期看是 NHP 需求结构性利空，但短期 (9 个月内) 影响有限。</p>
+    </div>
+    <div class="driver-card negative-driver">
+      <h4>② CITES 柬埔寨贸易暂停风险再起</h4>
+      <p>2025 年 2 月 CITES 暂缓议案但未消除；2026 年 6 月 CoP20 将再审议。若暂停柬埔寨出口，CRL 的 K.F. 库存成为"困兽"，新进口中断。</p>
+    </div>
+    <div class="driver-card negative-driver">
+      <h4>③ NIH 资助大幅缩减动物实验项目</h4>
+      <p>2025 年 7 月起 NIH 不再为"纯动物实验"项目设立资助。对学术基础研究 NHP 需求 (非 CRL 主战场) 影响显著。</p>
+    </div>
+    <div class="driver-card negative-driver">
+      <h4>④ 特朗普关税政策推高 NHP 进口成本</h4>
+      <p>2025 年美国对东南亚进口关税上调，食蟹猴采购成本结构性抬升。CRL 向客户转嫁能力受限于竞争。</p>
+    </div>
+    <div class="driver-card negative-driver">
+      <h4>⑤ PETA 等动保组织持续施压</h4>
+      <p>2025-12 PETA 称 CRL 将恢复柬埔寨进口并敦促政府关闭；动保舆论可能推动更严的 USDA/FWS 审查。</p>
+    </div>
+    <div class="driver-card negative-driver">
+      <h4>⑥ 资产剥离 $200M 年收入流失</h4>
+      <p>2026 Q2 关闭欧洲 5 处 Discovery 资产出售给 IQVIA ($144M DSA 收入) + CDMO/Cell 业务剥离。合计 ~7% 2026 收入流失，部分间接研究流量转移。</p>
+    </div>
+  </div>
+
+  <h3>净效应判断</h3>
+  <div class="caveat-box">
+    <strong>综合看，未来 9 个月 (2026.5-2027.1) CRL DSA 的 NHP 使用量预计同比 <span class="positive">+10 至 +15%</span>，达到 10,100-11,400 只</strong>。驱动因素排序 (影响强度)：
+    <ol style="margin-left:20px; margin-top:6px;">
+      <li><strong>最关键 — Q4 2025 订单积压的时滞兑现 (+8 ppt 贡献)</strong></li>
+      <li><strong>次重要 — 生物科技融资回暖 + 大药企重启外包 (+4 ppt)</strong></li>
+      <li><strong>第三 — K.F. 并表带来的成本优势与市占率提升 (+2 ppt)</strong></li>
+      <li><em>部分抵消 — NAMs/关税/动保压力 (-2 至 -3 ppt)</em></li>
+    </ol>
+    <strong>2027 年起</strong>，随着 FDA NAMs 验证框架落地和更多 mAb 项目试点取消动物实验，NHP 使用量增速将明显放缓至 0-5%；但 NHP 在细胞/基因治疗、疫苗、罕见病中<strong>仍不可替代</strong>，绝对量不会断崖下跌。CRL 通过 K.F.+Noveprim 自供战略，已将 NHP 风险"内化"，长期护城河反而加深。
+  </div>
+</div>
+
+<!-- ===================================== 投资观察要点 ===================================== -->
+<div class="section">
+  <h2>🔍 投资者应重点观察的数据点 (2026 年 Q2-Q4)</h2>
+  <ul>
+    <li><strong>2026 年 5 月 7 日 Q1 业绩：</strong>关注 DSA 季度收入能否守住 $585M 以上，以及 NHP 自采比例。</li>
+    <li><strong>2026 年 8 月 Q2 业绩：</strong>关注 DSA 是否转为<strong>正增长</strong>，以及 Safety Assessment 定价是否回升。</li>
+    <li><strong>2026 年 11 月 Q3 业绩：</strong>关注 K.F. 并表对 DSA 运营利润率的<strong>+100+ bp 增益</strong>是否兑现。</li>
+    <li><strong>2026 年 6 月 CITES CoP20：</strong>柬埔寨食蟹猴贸易议题将重审，结果直接决定 NHP 供应稳定性。</li>
+    <li><strong>FDA NAMs 草案定稿 (预计 2026 下半年)：</strong>关注验证要求严苛程度——越严苛，对 CRL 利好 (NHP 替代推迟)。</li>
+    <li><strong>新 CEO Girshick (2026-05 上任) 战略定调：</strong>资本开支节奏、NAMs 业务投入、是否继续剥离资产。</li>
+  </ul>
+</div>
+
+<footer>
+  <p>本报告基于公开披露信息整理，不构成投资建议。数据来源：SEC EDGAR (CRL 10-K, 10-Q, 8-K)、CRL 投资者关系网页、Charles River NHP Responsible Sourcing Report 2024/2025、USDA APHIS、Bloomberg、Fortune、Fierce Biotech、BusinessWire、Motley Fool earnings transcripts、Kaplan Fox 诉讼档案、FDA/NIH 官方公告等。</p>
+  <p style="margin-top:8px;">Charles River Laboratories 业务分析 · 2026-04-20 · 内部研究用</p>
+</footer>
+
+</div>
+
+<script>
+// ============ 图 1: DSA 季度收入趋势 ============
+const dsaCtx = document.getElementById('dsaChart').getContext('2d');
+new Chart(dsaCtx, {
+  type: 'bar',
+  data: {
+    labels: ['20Q1','20Q2','20Q3','20Q4','21Q1','21Q2','21Q3','21Q4','22Q1','22Q2','22Q3','22Q4','23Q1','23Q2','23Q3','23Q4','24Q1','24Q2','24Q3','24Q4','25Q1','25Q2','25Q3','25Q4','26Q1(E)'],
+    datasets: [{
+      label: 'DSA 收入 (M USD)',
+      data: [441.2, 442.6, 461.2, 495.0, 501.2, 542.9, 531.8, 534.1, 544.3, 591.9, 619.5, 691.7, 662.4, 663.5, 664.0, 625.8, 605.5, 627.4, 615.1, 603.3, 592.6, 618.0, 600.7, 591.6, 595.0],
+      backgroundColor: ctx => {
+        const i = ctx.dataIndex;
+        if (i === 24) return 'rgba(217, 140, 95, 0.4)'; // Q1 2026 估
+        if (i >= 12 && i <= 15) return 'rgba(217, 140, 95, 0.95)'; // 2023 峰值
+        if (i >= 16 && i <= 23) return 'rgba(205, 133, 63, 0.75)'; // 2024-2025 下滑
+        return 'rgba(143, 188, 143, 0.8)'; // 2020-2022 增长
+      },
+      borderColor: '#A0522D', borderWidth: 1,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { color: '#4A2C1A', font: {size:11} } },
+      tooltip: { callbacks: { label: ctx => `$${ctx.parsed.y.toFixed(1)}M` } }
+    },
+    scales: {
+      y: { title: { display: true, text: 'USD Million', color: '#4A2C1A' }, beginAtZero: false, min: 400, ticks: { color: '#5C3A22' } },
+      x: { ticks: { color: '#5C3A22', font: {size: 10} } }
+    }
+  }
+});
+
+// ============ 图 2: NHP 价格趋势 ============
+const priceCtx = document.getElementById('priceChart').getContext('2d');
+new Chart(priceCtx, {
+  type: 'line',
+  data: {
+    labels: ['2019','2020上','2020下','2021上','2021下','2022上','2022下','2023Q1','2023Q2','2023Q3','2023Q4','2024Q1','2024Q2','2024Q3','2024Q4','2025Q1','2025Q2','2025Q3','2025Q4','2026Q1(E)'],
+    datasets: [
+      {
+        label: 'NHP 现货价上限 (USD/只)',
+        data: [3500, 6000, 9000, 12000, 18000, 22000, 30000, 40000, 45000, 50000, 54000, 50000, 45000, 42000, 38000, 36000, 34000, 32000, 35000, 40000],
+        borderColor: '#C1440E', backgroundColor: 'rgba(193, 68, 14, 0.08)', borderWidth: 2.5, fill: false, tension: 0.35,
+      },
+      {
+        label: 'NHP 现货价下限 (USD/只)',
+        data: [2500, 3500, 5000, 8000, 12000, 15000, 22000, 32000, 35000, 38000, 42000, 35000, 32000, 30000, 28000, 26000, 25000, 24000, 26000, 28000],
+        borderColor: '#DEB887', backgroundColor: 'rgba(222, 184, 135, 0.15)', borderWidth: 2, fill: '-1', tension: 0.35,
+      },
+      {
+        label: 'CRL Safety Assessment 服务价格指数 (2019=100)',
+        data: [100, 103, 106, 110, 115, 121, 130, 142, 150, 155, 158, 159, 160, 159, 157, 156, 155, 155, 155, 156],
+        borderColor: '#556B2F', backgroundColor: 'rgba(85, 107, 47, 0.08)', borderWidth: 2.5, fill: false, yAxisID: 'y1', tension: 0.35, borderDash: [5,5],
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { color: '#4A2C1A', font: {size: 11} } } },
+    scales: {
+      y: { title: { display: true, text: 'USD / 只 (NHP 现货)', color: '#C1440E' }, ticks: { color: '#5C3A22', callback: v => '$'+v.toLocaleString() } },
+      y1: { position: 'right', title: { display: true, text: '服务价格指数 (2019=100)', color: '#556B2F' }, grid: { drawOnChartArea: false }, ticks: { color: '#5C3A22' } },
+      x: { ticks: { color: '#5C3A22', font: {size: 10} } }
+    }
+  }
+});
+
+// ============ 图 3: DSA 收入构成饼图 ============
+const pieCtx = document.getElementById('pieChart').getContext('2d');
+new Chart(pieCtx, {
+  type: 'doughnut',
+  data: {
+    labels: [
+      'Safety Assessment - NHP 研究 (~45%)',
+      'Safety Assessment - 啮齿类研究 (~25%)',
+      'Safety Assessment - 其他动物及服务 (~10%)',
+      'Discovery Services (~20%)'
+    ],
+    datasets: [{
+      data: [1080, 600, 240, 480],
+      backgroundColor: ['#C1440E','#D98C5F','#E8C9A3','#8FBC8F'],
+      borderColor: '#FFF8F0', borderWidth: 3
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'right', labels: { color: '#4A2C1A', font: {size:12}, padding: 8 } },
+      tooltip: { callbacks: { label: ctx => ctx.label + ': $' + ctx.parsed + 'M' } }
+    }
+  }
+});
+
+// ============ 图 4: 未来 9 个月 NHP 使用量预测 ============
+const forecastCtx = document.getElementById('forecastChart').getContext('2d');
+new Chart(forecastCtx, {
+  type: 'bar',
+  data: {
+    labels: ['25Q1', '25Q2', '25Q3', '25Q4', '26Q1(E)', '26Q2(F)', '26Q3(F)', '26Q4(F)'],
+    datasets: [
+      {
+        label: '历史/当前季度 (只)',
+        data: [2600, 2900, 2850, 3100, null, null, null, null],
+        backgroundColor: 'rgba(160, 82, 45, 0.75)',
+        borderColor: '#8B4513', borderWidth: 1
+      },
+      {
+        label: 'Q1 2026 预估 (只)',
+        data: [null, null, null, null, 3000, null, null, null],
+        backgroundColor: 'rgba(217, 140, 95, 0.55)',
+        borderColor: '#A0522D', borderWidth: 1
+      },
+      {
+        label: '未来 9 个月预测 (只)',
+        data: [null, null, null, null, null, 3400, 3600, 3750],
+        backgroundColor: 'rgba(143, 188, 143, 0.75)',
+        borderColor: '#556B2F', borderWidth: 1
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { color: '#4A2C1A', font: {size:11} } },
+      tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + (ctx.parsed.y ? ctx.parsed.y.toLocaleString() + ' 只' : 'N/A') } }
+    },
+    scales: {
+      y: { title: { display: true, text: 'NHP 使用量 (只)', color: '#4A2C1A' }, beginAtZero: true, ticks: { color: '#5C3A22' } },
+      x: { ticks: { color: '#5C3A22' } }
+    }
+  }
+});
+</script>
+</body>
+</html>
